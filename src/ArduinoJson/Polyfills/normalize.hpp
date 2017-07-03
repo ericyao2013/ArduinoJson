@@ -8,25 +8,27 @@
 #pragma once
 
 #include "../Configuration.hpp"
+#include "constPow10.hpp"
 
 namespace ArduinoJson {
 namespace Polyfills {
+
 template <typename T>
 int16_t normalize(T& value) {
   int16_t powersOf10 = 0;
 
   if (value >= ARDUINOJSON_POSITIVE_EXPONENTIATION_THRESHOLD) {
 #if ARDUINOJSON_DOUBLE_IS_64BITS
-    if (value >= 1e256) {
-      value /= 1e256;
+    if (value >= constPow10<256>()) {
+      value /= constPow10<256>();
       powersOf10 = int16_t(powersOf10 + 256);
     }
-    if (value >= 1e128) {
-      value /= 1e128;
+    if (value >= constPow10<128>()) {
+      value /= constPow10<128>();
       powersOf10 = int16_t(powersOf10 + 128);
     }
-    if (value >= 1e64) {
-      value /= 1e64;
+    if (value >= constPow10<64>()) {
+      value /= constPow10<64>();
       powersOf10 = int16_t(powersOf10 + 64);
     }
 #endif
@@ -58,16 +60,16 @@ int16_t normalize(T& value) {
 
   if (value > 0 && value <= ARDUINOJSON_NEGATIVE_EXPONENTIATION_THRESHOLD) {
 #if ARDUINOJSON_DOUBLE_IS_64BITS
-    if (value < 1e-255) {
-      value *= 1e256;
+    if (value < constPow10<-255>()) {
+      value *= constPow10<256>();
       powersOf10 = int16_t(powersOf10 - 256);
     }
-    if (value < 1e-127) {
-      value *= 1e128;
+    if (value < constPow10<-127>()) {
+      value *= constPow10<128>();
       powersOf10 = int16_t(powersOf10 - 128);
     }
-    if (value < 1e-63) {
-      value *= 1e64;
+    if (value < constPow10<-63>()) {
+      value *= constPow10<64>();
       powersOf10 = int16_t(powersOf10 - 64);
     }
 #endif
